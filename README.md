@@ -1,4 +1,4 @@
-# TaskTrack Backend
+﻿# TaskTrack Backend
 
 ASP.NET Core Web API backend for PRN232 Assignment 1. The solution uses three projects:
 
@@ -69,11 +69,12 @@ dotnet run --project TaskTrack.API
 
 1. Create a PostgreSQL database on Render.
 2. Run `TaskManagementDB_Postgres.sql` against that database.
-3. Create a Render Web Service for `StudentID_ClassCode_Ass1_BE`.
+3. Create a Render Web Service for `QE190088_SE19B_Ass1_BE`.
 4. Set build command: `dotnet publish TaskTrack.API/TaskTrack.API.csproj -c Release -o out`.
 5. Set start command: `dotnet out/TaskTrack.API.dll`.
 6. Set `DATABASE_URL`, `FRONTEND_URL`, and `ASPNETCORE_ENVIRONMENT=Production`.
 
 ## Naming Note
 
-The repository still uses `StudentID_ClassCode` placeholders. Replace those folder/solution names with your actual student ID and class code before submission if required.
+The repository still uses `QE190088_SE19B` placeholders. Replace those folder/solution names with your actual student ID and class code before submission if required.
+

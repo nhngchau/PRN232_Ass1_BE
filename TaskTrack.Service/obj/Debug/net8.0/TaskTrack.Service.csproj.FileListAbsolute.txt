@@ -1,0 +1,15 @@
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\bin\Debug\net8.0\TaskTrack.Service.deps.json
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\bin\Debug\net8.0\TaskTrack.Service.dll
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\bin\Debug\net8.0\TaskTrack.Service.pdb
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\bin\Debug\net8.0\TaskTrack.Repo.dll
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\bin\Debug\net8.0\TaskTrack.Repo.pdb
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrack.Service.csproj.AssemblyReference.cache
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrack.Service.GeneratedMSBuildEditorConfig.editorconfig
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrack.Service.AssemblyInfoInputs.cache
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrack.Service.AssemblyInfo.cs
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrack.Service.csproj.CoreCompileInputs.cache
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrac.EC9A70CF.Up2Date
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrack.Service.dll
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\refint\TaskTrack.Service.dll
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\TaskTrack.Service.pdb
+D:\PRN232-Final\QE190088_SE19B_Ass1_BE\TaskTrack.Service\obj\Debug\net8.0\ref\TaskTrack.Service.dll
