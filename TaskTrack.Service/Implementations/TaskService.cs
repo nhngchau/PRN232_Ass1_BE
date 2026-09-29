@@ -53,8 +53,7 @@ public class TaskService : ITaskService
             Priority = dto.Priority,
             DueDate = dto.DueDate,
             ProjectId = dto.ProjectId,
-            IsActive = true,
-            CreatedDate = DateTime.UtcNow
+            IsActive = true
         };
 
         foreach (var tag in tags)
@@ -89,7 +88,7 @@ public class TaskService : ITaskService
         task.Priority = dto.Priority;
         task.DueDate = dto.DueDate;
         task.ProjectId = dto.ProjectId;
-        task.ModifiedDate = DateTime.UtcNow;
+        task.ModifiedDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
         task.Tags.Clear();
         foreach (var tag in tags)
         {
@@ -111,7 +110,7 @@ public class TaskService : ITaskService
         }
 
         task.IsActive = false;
-        task.ModifiedDate = DateTime.UtcNow;
+        task.ModifiedDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
         _taskRepository.Update(task);
         await _taskRepository.SaveChangesAsync();
         return ServiceResult<bool>.Success(true);

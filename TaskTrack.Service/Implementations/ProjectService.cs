@@ -50,8 +50,7 @@ public class ProjectService : IProjectService
             EndDate = dto.EndDate,
             Status = dto.Status,
             DepartmentId = dto.DepartmentId,
-            IsActive = true,
-            CreatedDate = DateTime.UtcNow
+            IsActive = true
         };
 
         await _projectRepository.AddAsync(project);
