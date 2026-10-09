@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskTrack.Service.DTOs;
 using TaskTrack.Service.Interfaces;
@@ -24,6 +25,7 @@ public class ProjectsController : ApiControllerBase
     public async Task<IActionResult> GetByDepartment(int departmentId) => Ok(await _projectService.GetByDepartmentAsync(departmentId));
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(CreateProjectDto dto)
     {
         var result = await _projectService.CreateAsync(dto);
@@ -36,9 +38,11 @@ public class ProjectsController : ApiControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, UpdateProjectDto dto) => FromResult(await _projectService.UpdateAsync(id, dto));
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id) => NoContentFromResult(await _projectService.DeleteAsync(id));
 
     [HttpGet("search")]

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskTrack.Service.DTOs;
 using TaskTrack.Service.Interfaces;
@@ -18,6 +19,7 @@ public class TagsController : ApiControllerBase
     public async Task<IActionResult> GetAll() => Ok(await _tagService.GetAllAsync());
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(CreateTagDto dto)
     {
         var result = await _tagService.CreateAsync(dto);
@@ -30,8 +32,10 @@ public class TagsController : ApiControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, UpdateTagDto dto) => FromResult(await _tagService.UpdateAsync(id, dto));
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id) => NoContentFromResult(await _tagService.DeleteAsync(id));
 }

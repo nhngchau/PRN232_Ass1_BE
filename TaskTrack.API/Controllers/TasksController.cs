@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 using TaskTrack.Service.DTOs;
 using TaskTrack.Service.Interfaces;
 
@@ -24,9 +26,16 @@ public class TasksController : ApiControllerBase
     public async Task<IActionResult> GetByProject(int projectId) => Ok(await _taskService.GetByProjectAsync(projectId));
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create(CreateTaskDto dto)
     {
-        var result = await _taskService.CreateAsync(dto);
+        var accountId = GetAuthenticatedAccountId();
+        if (!accountId.HasValue)
+        {
+            return Unauthorized(new ApiErrorDto("Authenticated token is missing AccountID claim."));
+        }
+
+        var result = await _taskService.CreateAsync(dto, accountId.Value);
         if (!result.Succeeded)
         {
             return FromResult(result);
@@ -36,9 +45,11 @@ public class TasksController : ApiControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, UpdateTaskDto dto) => FromResult(await _taskService.UpdateAsync(id, dto));
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id) => NoContentFromResult(await _taskService.SoftDeleteAsync(id));
 
     [HttpGet("search")]
@@ -49,4 +60,12 @@ public class TasksController : ApiControllerBase
         [FromQuery] int? projectId,
         [FromQuery] int? tagId) =>
         Ok(await _taskService.SearchAsync(title, status, priority, projectId, tagId));
+
+    private int? GetAuthenticatedAccountId()
+    {
+        var accountId = User.FindFirst("AccountID")?.Value;
+        return int.TryParse(accountId, NumberStyles.Integer, CultureInfo.InvariantCulture, out var id)
+            ? id
+            : null;
+    }
 }

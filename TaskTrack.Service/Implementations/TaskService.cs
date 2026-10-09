@@ -36,7 +36,7 @@ public class TaskService : ITaskService
     public async Task<List<TaskDto>> SearchAsync(string? title, short? status, short? priority, int? projectId, int? tagId) =>
         (await _taskRepository.SearchAsync(title, status, priority, projectId, tagId)).Select(t => t.ToDto()).ToList();
 
-    public async Task<ServiceResult<TaskDto>> CreateAsync(CreateTaskDto dto)
+    public async Task<ServiceResult<TaskDto>> CreateAsync(CreateTaskDto dto, int? createdByAccountId = null)
     {
         var validation = await ValidateTaskAsync(dto);
         if (validation.Count > 0)
@@ -53,6 +53,7 @@ public class TaskService : ITaskService
             Priority = dto.Priority,
             DueDate = dto.DueDate,
             ProjectId = dto.ProjectId,
+            CreatedByAccountId = createdByAccountId,
             IsActive = true
         };
 
