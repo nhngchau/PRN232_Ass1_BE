@@ -18,6 +18,8 @@ public partial class Task
 
     public int? CreatedByAccountId { get; set; }
 
+    public int? UpdatedByAccountId { get; set; }
+
     public bool IsActive { get; set; }
 
     public DateTime CreatedDate { get; set; }
@@ -27,6 +29,8 @@ public partial class Task
     public virtual Project Project { get; set; } = null!;
 
     public virtual SystemAccount? CreatedByAccount { get; set; }
+
+    public virtual SystemAccount? UpdatedByAccount { get; set; }
 
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }

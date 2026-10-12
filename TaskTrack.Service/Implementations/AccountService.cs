@@ -8,10 +8,12 @@ namespace TaskTrack.Service.Implementations;
 public class AccountService : IAccountService
 {
     private readonly IAccountRepository _accountRepository;
+    private readonly IPasswordHasher _passwordHasher;
 
-    public AccountService(IAccountRepository accountRepository)
+    public AccountService(IAccountRepository accountRepository, IPasswordHasher passwordHasher)
     {
         _accountRepository = accountRepository;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<List<AccountManagementDto>> GetAllAsync() =>
@@ -65,6 +67,79 @@ public class AccountService : IAccountService
         return ServiceResult<bool>.Success(true);
     }
 
+    public async Task<ServiceResult<ProfileDto>> GetProfileAsync(int accountId)
+    {
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        return account is null
+            ? ServiceResult<ProfileDto>.Missing("Account was not found.")
+            : ServiceResult<ProfileDto>.Success(ToProfileDto(account));
+    }
+
+    public async Task<ServiceResult<ProfileDto>> UpdateProfileAsync(int accountId, UpdateProfileDto dto)
+    {
+        var errors = new Dictionary<string, string[]>();
+        if (string.IsNullOrWhiteSpace(dto.FullName))
+        {
+            errors[nameof(dto.FullName)] = ["Full name is required."];
+        }
+
+        if (errors.Count > 0)
+        {
+            return ServiceResult<ProfileDto>.Invalid(errors);
+        }
+
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        if (account is null)
+        {
+            return ServiceResult<ProfileDto>.Missing("Account was not found.");
+        }
+
+        account.FullName = dto.FullName.Trim();
+        _accountRepository.Update(account);
+        await _accountRepository.SaveChangesAsync();
+
+        return ServiceResult<ProfileDto>.Success(ToProfileDto(account));
+    }
+
+    public async Task<ServiceResult<bool>> ChangePasswordAsync(int accountId, ChangePasswordDto dto)
+    {
+        var errors = new Dictionary<string, string[]>();
+        if (string.IsNullOrWhiteSpace(dto.CurrentPassword))
+        {
+            errors[nameof(dto.CurrentPassword)] = ["Current password is required."];
+        }
+
+        if (string.IsNullOrWhiteSpace(dto.NewPassword) || dto.NewPassword.Length < 6)
+        {
+            errors[nameof(dto.NewPassword)] = ["New password must be at least 6 characters."];
+        }
+
+        if (errors.Count > 0)
+        {
+            return ServiceResult<bool>.Invalid(errors);
+        }
+
+        var account = await _accountRepository.GetByIdAsync(accountId);
+        if (account is null)
+        {
+            return ServiceResult<bool>.Missing("Account was not found.");
+        }
+
+        if (!_passwordHasher.VerifyPassword(dto.CurrentPassword, account.PasswordHash))
+        {
+            return ServiceResult<bool>.Invalid(new Dictionary<string, string[]>
+            {
+                [nameof(dto.CurrentPassword)] = ["Current password is incorrect."]
+            });
+        }
+
+        account.PasswordHash = _passwordHasher.HashPassword(dto.NewPassword);
+        _accountRepository.Update(account);
+        await _accountRepository.SaveChangesAsync();
+
+        return ServiceResult<bool>.Success(true);
+    }
+
     private static Dictionary<string, string[]> ValidateUpdate(UpdateAccountDto dto)
     {
         var errors = new Dictionary<string, string[]>();
@@ -82,5 +157,8 @@ public class AccountService : IAccountService
     }
 
     private static AccountManagementDto ToDto(SystemAccount account) =>
+        new(account.AccountId, account.FullName, account.Email, account.Role, account.CreatedDate);
+
+    private static ProfileDto ToProfileDto(SystemAccount account) =>
         new(account.AccountId, account.FullName, account.Email, account.Role, account.CreatedDate);
 }

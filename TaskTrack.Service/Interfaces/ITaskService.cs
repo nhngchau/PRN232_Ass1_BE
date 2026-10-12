@@ -9,6 +9,6 @@ public interface ITaskService
     Task<List<TaskDto>> GetByProjectAsync(int projectId);
     Task<List<TaskDto>> SearchAsync(string? title, short? status, short? priority, int? projectId, int? tagId);
     Task<ServiceResult<TaskDto>> CreateAsync(CreateTaskDto dto, int? createdByAccountId = null);
-    Task<ServiceResult<TaskDto>> UpdateAsync(int id, UpdateTaskDto dto);
-    Task<ServiceResult<bool>> SoftDeleteAsync(int id);
+    Task<ServiceResult<TaskDto>> UpdateAsync(int id, UpdateTaskDto dto, int? updatedByAccountId = null);
+    Task<ServiceResult<bool>> SoftDeleteAsync(int id, int? updatedByAccountId = null);
 }

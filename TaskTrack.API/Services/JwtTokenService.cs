@@ -17,7 +17,7 @@ public class JwtTokenService : IJwtTokenService
         _configuration = configuration;
     }
 
-    public LoginResponseDto CreateLoginResponse(AccountDto account)
+    public LoginResponseDto CreateLoginResponse(AccountDto account, string refreshToken)
     {
         var secret = GetJwtSecret(_configuration);
         var issuer = _configuration["Jwt:Issuer"];
@@ -43,7 +43,7 @@ public class JwtTokenService : IJwtTokenService
             expires: expiresAt,
             signingCredentials: credentials);
 
-        return new LoginResponseDto(new JwtSecurityTokenHandler().WriteToken(token), expiresAt, account);
+        return new LoginResponseDto(new JwtSecurityTokenHandler().WriteToken(token), expiresAt, refreshToken, account);
     }
 
     public static string GetJwtSecret(IConfiguration configuration)

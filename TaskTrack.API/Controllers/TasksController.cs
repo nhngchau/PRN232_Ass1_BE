@@ -46,11 +46,29 @@ public class TasksController : ApiControllerBase
 
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<IActionResult> Update(int id, UpdateTaskDto dto) => FromResult(await _taskService.UpdateAsync(id, dto));
+    public async Task<IActionResult> Update(int id, UpdateTaskDto dto)
+    {
+        var accountId = GetAuthenticatedAccountId();
+        if (!accountId.HasValue)
+        {
+            return Unauthorized(new ApiErrorDto("Authenticated token is missing AccountID claim."));
+        }
+
+        return FromResult(await _taskService.UpdateAsync(id, dto, accountId.Value));
+    }
 
     [HttpDelete("{id:int}")]
     [Authorize]
-    public async Task<IActionResult> Delete(int id) => NoContentFromResult(await _taskService.SoftDeleteAsync(id));
+    public async Task<IActionResult> Delete(int id)
+    {
+        var accountId = GetAuthenticatedAccountId();
+        if (!accountId.HasValue)
+        {
+            return Unauthorized(new ApiErrorDto("Authenticated token is missing AccountID claim."));
+        }
+
+        return NoContentFromResult(await _taskService.SoftDeleteAsync(id, accountId.Value));
+    }
 
     [HttpGet("search")]
     public async Task<IActionResult> Search(

@@ -23,9 +23,40 @@ public class LoginRequestDto
     public string Password { get; set; } = string.Empty;
 }
 
+public class RefreshTokenRequestDto
+{
+    [Required]
+    public string RefreshToken { get; set; } = string.Empty;
+}
+
+public class LogoutRequestDto
+{
+    public string? RefreshToken { get; set; }
+}
+
 public record AccountDto(int AccountId, string FullName, string Email, int Role);
 
-public record LoginResponseDto(string Token, DateTime ExpiresAt, AccountDto Account);
+public class LoginResponseDto
+{
+    public LoginResponseDto(string accessToken, DateTime accessTokenExpiry, string refreshToken, AccountDto account)
+    {
+        Token = accessToken;
+        AccessToken = accessToken;
+        ExpiresAt = accessTokenExpiry;
+        AccessTokenExpiry = accessTokenExpiry;
+        RefreshToken = refreshToken;
+        Account = account;
+    }
+
+    public string Token { get; }
+    public string AccessToken { get; }
+    public DateTime ExpiresAt { get; }
+    public DateTime AccessTokenExpiry { get; }
+    public string RefreshToken { get; }
+    public AccountDto Account { get; }
+}
+
+public record RefreshTokenResultDto(AccountDto Account, string RefreshToken);
 
 public class AuthServiceResult<T>
 {

@@ -4,5 +4,5 @@ namespace TaskTrack.Service.Interfaces;
 
 public interface IJwtTokenService
 {
-    LoginResponseDto CreateLoginResponse(AccountDto account);
+    LoginResponseDto CreateLoginResponse(AccountDto account, string refreshToken);
 }

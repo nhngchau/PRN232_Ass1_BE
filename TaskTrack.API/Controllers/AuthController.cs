@@ -39,6 +39,31 @@ public class AuthController : ApiControllerBase
             return Unauthorized(new ApiErrorDto(result.Error ?? "Invalid email or password."));
         }
 
-        return Ok(_jwtTokenService.CreateLoginResponse(result.Data!));
+        var refreshTokenResult = await _authService.CreateRefreshTokenAsync(result.Data!.AccountId);
+        if (refreshTokenResult.Unauthorized)
+        {
+            return Unauthorized(new ApiErrorDto(refreshTokenResult.Error ?? "Could not create refresh token."));
+        }
+
+        return Ok(_jwtTokenService.CreateLoginResponse(result.Data!, refreshTokenResult.Data!));
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(RefreshTokenRequestDto dto)
+    {
+        var result = await _authService.RefreshAsync(dto.RefreshToken);
+        if (result.Unauthorized)
+        {
+            return Unauthorized(new ApiErrorDto(result.Error ?? "Refresh token is invalid or expired."));
+        }
+
+        return Ok(_jwtTokenService.CreateLoginResponse(result.Data!.Account, result.Data.RefreshToken));
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(LogoutRequestDto dto)
+    {
+        await _authService.RevokeRefreshTokenAsync(dto.RefreshToken);
+        return NoContent();
     }
 }

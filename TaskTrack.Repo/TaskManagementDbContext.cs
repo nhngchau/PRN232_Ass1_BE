@@ -20,6 +20,8 @@ public partial class TaskManagementDbContext : DbContext
 
     public virtual DbSet<SystemAccount> SystemAccounts { get; set; }
 
+    public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Department>(entity =>
@@ -64,6 +66,7 @@ public partial class TaskManagementDbContext : DbContext
             entity.Property(e => e.Priority).HasDefaultValue((short)1);
             entity.Property(e => e.ProjectId).HasColumnName("ProjectID");
             entity.Property(e => e.CreatedByAccountId).HasColumnName("CreatedByAccountID");
+            entity.Property(e => e.UpdatedByAccountId).HasColumnName("UpdatedByAccountID");
             entity.Property(e => e.Status).HasDefaultValue((short)0);
             entity.Property(e => e.Title).HasMaxLength(300);
 
@@ -76,6 +79,11 @@ public partial class TaskManagementDbContext : DbContext
                 .HasForeignKey(d => d.CreatedByAccountId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Task_SystemAccount_CreatedBy");
+
+            entity.HasOne(d => d.UpdatedByAccount).WithMany(p => p.UpdatedTasks)
+                .HasForeignKey(d => d.UpdatedByAccountId)
+                .OnDelete(DeleteBehavior.SetNull)
+                .HasConstraintName("FK_Task_SystemAccount_UpdatedBy");
 
             entity.HasMany(d => d.Tags).WithMany(p => p.Tasks)
                 .UsingEntity<Dictionary<string, object>>(
@@ -120,6 +128,28 @@ public partial class TaskManagementDbContext : DbContext
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasColumnType("timestamp without time zone");
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasKey(e => e.RefreshTokenId).HasName("RefreshToken_pkey");
+            entity.ToTable("RefreshToken");
+            entity.HasIndex(e => e.TokenHash, "RefreshToken_TokenHash_key").IsUnique();
+            entity.HasIndex(e => e.AccountId, "IX_RefreshToken_AccountID");
+            entity.Property(e => e.RefreshTokenId).HasColumnName("RefreshTokenID");
+            entity.Property(e => e.AccountId).HasColumnName("AccountID");
+            entity.Property(e => e.TokenHash).HasMaxLength(128);
+            entity.Property(e => e.ExpiresAt).HasColumnType("timestamp without time zone");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp without time zone");
+            entity.Property(e => e.RevokedAt).HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ReplacedByTokenHash).HasMaxLength(128);
+
+            entity.HasOne(d => d.Account).WithMany(p => p.RefreshTokens)
+                .HasForeignKey(d => d.AccountId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_RefreshToken_SystemAccount");
         });
 
         OnModelCreatingPartial(modelBuilder);

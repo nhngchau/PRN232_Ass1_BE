@@ -68,7 +68,7 @@ public class TaskService : ITaskService
         return ServiceResult<TaskDto>.Success(detail!.ToDto());
     }
 
-    public async Task<ServiceResult<TaskDto>> UpdateAsync(int id, UpdateTaskDto dto)
+    public async Task<ServiceResult<TaskDto>> UpdateAsync(int id, UpdateTaskDto dto, int? updatedByAccountId = null)
     {
         var task = await _taskRepository.GetByIdWithTagsAsync(id);
         if (task is null || !task.IsActive)
@@ -90,6 +90,7 @@ public class TaskService : ITaskService
         task.DueDate = dto.DueDate;
         task.ProjectId = dto.ProjectId;
         task.ModifiedDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+        task.UpdatedByAccountId = updatedByAccountId;
         task.Tags.Clear();
         foreach (var tag in tags)
         {
@@ -102,7 +103,7 @@ public class TaskService : ITaskService
         return ServiceResult<TaskDto>.Success(detail!.ToDto());
     }
 
-    public async Task<ServiceResult<bool>> SoftDeleteAsync(int id)
+    public async Task<ServiceResult<bool>> SoftDeleteAsync(int id, int? updatedByAccountId = null)
     {
         var task = await _taskRepository.GetByIdWithTagsAsync(id);
         if (task is null || !task.IsActive)
@@ -112,6 +113,7 @@ public class TaskService : ITaskService
 
         task.IsActive = false;
         task.ModifiedDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+        task.UpdatedByAccountId = updatedByAccountId;
         _taskRepository.Update(task);
         await _taskRepository.SaveChangesAsync();
         return ServiceResult<bool>.Success(true);

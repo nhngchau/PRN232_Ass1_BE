@@ -15,4 +15,8 @@ public partial class SystemAccount
     public DateTime CreatedDate { get; set; }
 
     public virtual ICollection<Task> CreatedTasks { get; set; } = new List<Task>();
+
+    public virtual ICollection<Task> UpdatedTasks { get; set; } = new List<Task>();
+
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }
