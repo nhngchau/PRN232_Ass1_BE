@@ -98,6 +98,8 @@ Main tables:
 - Task
 - Tag
 - TaskTag
+- SystemAccount (Assignment 2)
+- RefreshToken (Assignment 2)
 
 ---
 
@@ -231,6 +233,29 @@ PUT    /api/tags/{id}
 DELETE /api/tags/{id}
 ```
 
+### Authentication (Assignment 2)
+
+```http
+POST   /api/auth/register   (public, creates Staff accounts only: 201 / 409)
+POST   /api/auth/login      (public, returns JWT: 200 / 401)
+POST   /api/auth/refresh    (public, rotates refresh token)
+POST   /api/auth/logout     (public, revokes refresh token)
+GET    /api/accounts        (Admin only)
+GET    /api/accounts/{id}   (Admin only)
+PUT    /api/accounts/{id}   (Admin only, update name or role)
+DELETE /api/accounts/{id}   (Admin only, rejected if the account created tasks)
+GET    /api/profile         (any logged-in user)
+PUT    /api/profile         (any logged-in user)
+PUT    /api/profile/password (any logged-in user)
+```
+
+Access rules:
+
+- All `GET` endpoints for departments, projects, tasks, tags, and search are public.
+- `POST`, `PUT`, `DELETE` on departments, projects, tasks, and tags require a valid JWT (`Authorization: Bearer <token>`).
+- Missing or invalid token on a protected endpoint returns `401`; a Staff token on an Admin-only endpoint returns `403`.
+- JWT payload contains `AccountID`, `Email`, `Role`, and `exp` (24 hours by default).
+
 ---
 
 ## Environment Variables
@@ -240,10 +265,19 @@ Production configuration uses environment variables such as:
 ```env
 DATABASE_URL=
 FRONTEND_URL=
+JWT_SECRET=
 ASPNETCORE_ENVIRONMENT=Production
 ```
 
+`JWT_SECRET` must be at least 32 bytes. In development it falls back to `Jwt:Secret` in `appsettings.Development.json`.
+
 Do not commit real database passwords or private credentials.
+
+### Database setup for Assignment 2
+
+1. Run `database/Assignment2_Auth_Migration.sql` (adds `SystemAccount`, `RefreshToken`, and task audit columns).
+2. Run `database/Assignment2_Seed_Admin.sql` (inserts the Admin account; the register API cannot create Admins).
+3. Register a Staff account through `POST /api/auth/register` or the frontend `/register` page.
 
 ---
 
@@ -320,7 +354,8 @@ Validation and delete-guard failures return meaningful error responses to the fr
 
 ## Main Features
 
-- Public CRUD without authentication
+- Public read endpoints; JWT-protected create, update, and delete
+- Admin-only account management (Staff receives 403)
 - Department management
 - Project management
 - Task management
